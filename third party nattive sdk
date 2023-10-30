@@ -1,0 +1,25 @@
+// A Sample Program to connect A Third Party Native SDK using A React Native
+
+package com.yourapp;
+
+import com.facebook.react.bridge.NativeModule;
+import com.facebook.react.bridge.ReactApplicationContext;
+import com.facebook.react.bridge.ReactContextBaseJavaModule;
+import com.facebook.react.bridge.ReactMethod;
+
+public class MyNativeModule extends ReactContextBaseJavaModule {
+  public MyNativeModule(ReactApplicationContext reactContext) {
+    super(reactContext);
+  }
+
+  @Override
+  public String getName() {
+    return "MyNativeModule";
+  }
+
+  @ReactMethod
+  public void connectToSDK(String apiKey) {
+    // Call the third-party SDK's connect method with the provided API key
+    ThirdPartySDK.connect(apiKey);
+  }
+}
