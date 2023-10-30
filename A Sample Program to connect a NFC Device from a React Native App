@@ -1,0 +1,59 @@
+// A Sample Program to connect a NFC Device from a React Native App 
+
+npm install react-native-nfc-manager
+
+
+import React, { useEffect, useState } from 'react';
+import { View, Text, Button } from 'react-native';
+import NfcManager, { NfcEvents } from 'react-native-nfc-manager';
+
+const NfcConnectScreen = () => {
+  const [isNfcSupported, setIsNfcSupported] = useState(false);
+  const [isNfcEnabled, setIsNfcEnabled] = useState(false);
+
+  useEffect(() => {
+    NfcManager.isSupported().then(supported => {
+      setIsNfcSupported(supported);
+    });
+
+    NfcManager.isEnabled().then(enabled => {
+      setIsNfcEnabled(enabled);
+    });
+
+    NfcManager.start();
+    NfcManager.setEventListener(NfcEvents.DiscoverTag, tag => {
+      console.log('Discovered NFC tag:', tag);
+      // Perform actions with the discovered NFC tag
+    });
+
+    return () => {
+      NfcManager.setEventListener(NfcEvents.DiscoverTag, null);
+      NfcManager.unregisterTagEvent().catch(() => {});
+      NfcManager.cancelTechnologyRequest().catch(() => {});
+    };
+  }, []);
+
+  const enableNfc = () => {
+    NfcManager.goToNfcSetting();
+  };
+
+  const startNfcScan = () => {
+    NfcManager.registerTagEvent();
+  };
+
+  return (
+    <View>
+      <Text>NFC Connect Screen</Text>
+
+      {!isNfcSupported && <Text>NFC is not supported on this device.</Text>}
+      {isNfcSupported && !isNfcEnabled && (
+        <Button title="Enable NFC" onPress={enableNfc} />
+      )}
+      {isNfcSupported && isNfcEnabled && (
+        <Button title="Start NFC Scan" onPress={startNfcScan} />
+      )}
+    </View>
+  );
+};
+
+export default NfcConnectScreen;
