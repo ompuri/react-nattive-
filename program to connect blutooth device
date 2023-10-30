@@ -1,0 +1,60 @@
+A Sample Program to connect a Blue Tooth Device from a React Native
+
+
+//Write a sample program to connect a blue tooth  device from a react native or similar technology   
+
+
+import React, { useEffect, useState } from 'react';
+import { BleManager } from 'react-native-ble-plx';
+import { View, Text, Button } from 'react-native';
+
+const BluetoothConnectScreen = () => {
+  const [manager, setManager] = useState(null);
+  const [device, setDevice] = useState(null);
+
+  useEffect(() => {
+    const bleManager = new BleManager();
+    setManager(bleManager);
+
+    return () => {
+      bleManager.destroy();
+    };
+  }, []);
+
+  const connectToDevice = async () => {
+    try {
+      const connectedDevice = await manager.connectToDevice(device.id);
+      setDevice(connectedDevice);
+      console.log('Connected to device:', connectedDevice.name);
+    } catch (error) {
+      console.log('Error connecting to device:', error);
+    }
+  };
+
+  const scanForDevices = async () => {
+    try {
+      const scannedDevices = await manager.startDeviceScan(null, null);
+      setDevice(scannedDevices[0]);
+      console.log('Found device:', scannedDevices[0].name);
+    } catch (error) {
+      console.log('Error scanning for devices:', error);
+    }
+  };
+
+  return (
+    <View>
+      <Text>Bluetooth Connect Screen</Text>
+
+      <Button title="Scan for Devices" onPress={scanForDevices} />
+
+      {device && (
+        <View>
+          <Text>Found Device: {device.name}</Text>
+          <Button title="Connect" onPress={connectToDevice} />
+        </View>
+      )}
+    </View>
+  );
+};
+
+export default BluetoothConnectScreen;
